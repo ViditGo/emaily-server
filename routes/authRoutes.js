@@ -16,8 +16,10 @@ app.get('/api/current_user', (req, res ) => {
 app.get('/api/logout', (req, res) => {
     req.logout();
     res.send('You have been logged out', () => {
-        setTimeout(3000, () => {res.redirect('/api/login')});
+        setTimeout(3000, () => {
+            res.redirect('/api/login')
+        });
     })
-})
+});
 
 }

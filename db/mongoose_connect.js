@@ -6,8 +6,9 @@ mongoose.Promise = global.Promise;
 
 mongoose.connect(keys.mongoURI)
   .then(() => { 
-    console.log('connected to mongo'); // if all is ok we will be here
+    console.log('connected to mongo'); 
  })
- .catch(err => { // we will not be here...
+ .catch(err => { 
      console.error('App starting error:', err.stack);
  });;
+

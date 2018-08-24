@@ -10,49 +10,44 @@ passport.use(new GoogleStrategy({
     clientSecret : keys.googleClientSecret,
     callbackURL : '/auth/google/callback',
     proxy: true
-}, (accessToken, refreshToken, profile, done) => {
+}, async (accessToken, refreshToken, profile, done) => {
 
-    User.findOne({googleID : profile.id})
-    .then(
-        (user) => {
-            if(user){
+    const existingUser = await User.findOne({googleID : profile.id});
+            if(existingUser){
                 console.log("You are welcome!");
-                done(null, user);
+                done(null, existingUser);
             }
-            else{
-                new User({googleID : profile.id}).save()
-                .then(
-                    (user)=>{
-                        done(null, user) }
-                        ).catch(
-                            (err) => { 
-                                console.log(err);
-                            }
-                );
-            }
-            
-        }
-    )
-    .catch(
-        (err) => {
-            console.log(err)
-        }
-     );
-   
+            else {
+    const newUser = await new User({googleID : profile.id}).save();
+                    done(null, newUser);
+                }
 }));
+   
+// passport.use(new TwitterStrategy({
+//     clientID : keys.twitterClientID,
+//     clientSecret : keys.twitterClientSecret,
+//     callbackURL : '/auth/twitter/callback',
+//     proxy: true
+// }, async (accessToken, refreshToken, profile, done) => {
+
+//     const existingUser = await User.findOne({twitterID : profile.id});
+//             if(existingUser){
+//                 console.log("You are welcome!");
+//                 done(null, existingUser);
+//             }
+//             else {
+//     const newUser = await new User({twitterID : profile.id}).save();
+//                     done(null, newUser);
+//                 }
+// }));
 
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 
-passport.deserializeUser((id, done) => {
-    User.findByID(id)
-    .then((user) => {
+passport.deserializeUser( async(id, done) => {
+const user = await User.findByID(id)
         done(null, user);
-    })
-    .catch((err) => {
-        console.log(err);
-    });
 })
 
 
